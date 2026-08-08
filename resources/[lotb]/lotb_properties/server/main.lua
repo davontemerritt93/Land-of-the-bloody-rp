@@ -19,17 +19,25 @@ exports('CanAccess', canAccess)
 lib.callback.register('lotb_properties:listMine', function(source)
     local citizenid = cid(source)
     if not citizenid then return {} end
-    return MySQL.query.await([[
-        SELECT property_key,label,district,property_type,owner_citizenid,purchase_price,rent_price,maintenance,security,coords_json,state_json
-        FROM lotb_properties
-        WHERE owner_citizenid = ? OR property_key IN (SELECT property_key FROM lotb_property_access WHERE citizenid = ?)
-        ORDER BY label
-    ]], { citizenid, citizenid }) or {}
+    local rows = MySQL.query.await([[
+        SELECT p.property_key,p.label,p.district,p.property_type,p.owner_citizenid,p.purchase_price,p.rent_price,p.maintenance,p.security,p.coords_json,p.state_json,
+               (SELECT a.access_level FROM lotb_property_access a WHERE a.property_key=p.property_key AND a.citizenid=? LIMIT 1) AS access_level
+        FROM lotb_properties p
+        WHERE p.owner_citizenid = ? OR p.property_key IN (SELECT property_key FROM lotb_property_access WHERE citizenid = ?)
+        ORDER BY p.label
+    ]], { citizenid, citizenid, citizenid }) or {}
+    for _, row in ipairs(rows) do
+        row.isOwner = row.owner_citizenid == citizenid
+        row.isOwned = row.owner_citizenid ~= nil
+        row.owner_citizenid = nil
+    end
+    return rows
 end)
 
 lib.callback.register('lotb_properties:nearby', function(source)
+    local citizenid = cid(source)
     local ped = GetPlayerPed(source)
-    if not ped or ped <= 0 then return {} end
+    if not citizenid or not ped or ped <= 0 then return {} end
     local pos = GetEntityCoords(ped)
     local rows = MySQL.query.await('SELECT property_key,label,district,property_type,owner_citizenid,purchase_price,rent_price,maintenance,security,coords_json FROM lotb_properties') or {}
     local out = {}
@@ -40,6 +48,9 @@ lib.callback.register('lotb_properties:nearby', function(source)
             local distance = math.sqrt(dx * dx + dy * dy + dz * dz)
             if distance <= 30.0 then
                 row.distance = math.floor(distance * 10) / 10
+                row.isOwner = row.owner_citizenid == citizenid
+                row.isOwned = row.owner_citizenid ~= nil
+                row.owner_citizenid = nil
                 out[#out + 1] = row
             end
         end
