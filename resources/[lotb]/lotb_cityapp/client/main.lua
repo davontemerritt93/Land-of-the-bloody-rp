@@ -17,6 +17,7 @@ local function openCityApp()
                 return {title=row.title,description=('%s%s\n%s'):format(row.category,row.district and (' • '..row.district) or '',row.body),icon=row.priority>=7 and 'triangle-exclamation' or 'bullhorn'}
             end)
         end},
+        {title='LOTB News',description='Player-written reporting, investigations and corrections.',icon='newspaper',onSelect=function() ExecuteCommand('news') end},
         {title='City history',description=('%s recent public records'):format(#(data.archive or {})),icon='landmark',onSelect=function()
             simple('lotb_city_history','City History',data.archive,function(row)
                 return {title=row.title,description=('%s%s\n%s'):format(row.category,row.district and (' • '..row.district) or '',row.summary),icon='book-open'}
