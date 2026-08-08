@@ -41,6 +41,7 @@ ensure lotb_crews
 ensure lotb_contracts
 ensure lotb_dispatch
 ensure lotb_justice
+ensure lotb_corrections
 ensure lotb_medical
 ensure lotb_world
 ensure lotb_rumors
