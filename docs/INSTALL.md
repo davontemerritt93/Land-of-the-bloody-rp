@@ -6,7 +6,7 @@ This repository is the custom **LOTB gameplay layer**. It expects a current Qbox
 
 ## Required base
 
-Use the current official Qbox txAdmin recipe for the base server. LOTB v0.4 expects at minimum:
+Use the current official Qbox txAdmin recipe for the base server. LOTB v0.5 expects at minimum:
 
 - FiveM/FXServer with OneSync
 - Qbox / `qbx_core`
@@ -24,17 +24,23 @@ For a production city also install/configure garages, appearance, voice, phone/c
 2. Confirm you can create/log into a character and the base has no console errors.
 3. Back up MariaDB.
 4. Import `sql/lotb.sql`.
-5. Import `sql/lotb_v04.sql` after the base LOTB schema.
-6. Optional for quick dealership testing: import `sql/lotb_seed_v04.sql`.
-7. Copy `resources/[lotb]` into the server `resources` directory.
-8. Copy the LOTB ACE permissions and `ensure` block from `server.cfg.example` after Qbox/ox dependencies.
-9. Map real staff principals to the LOTB ACE permissions in your private production config.
-10. Restart.
-11. Run `/lotbhealth` as an admin.
+5. Import `sql/lotb_v04.sql`.
+6. Import `sql/lotb_v05.sql`.
+7. Optional for quick testing: import `sql/lotb_seed_v04.sql` and `sql/lotb_seed_v05.sql`.
+8. Copy `resources/[lotb]` into the server `resources` directory.
+9. Copy the LOTB ACE permissions and `ensure` block from `server.cfg.example` after Qbox/ox dependencies.
+10. Map real staff principals to the LOTB ACE permissions in your private production config.
+11. Restart.
+12. Run `/lotbhealth` as an admin.
 
 Expected result:
 
-`LOTB v0.4 health: database ready and all custom resources started.`
+`LOTB v0.5 health: database ready and all custom resources started.`
+
+## Main player interface
+
+- `/cityapp` — unified LOTB dashboard for notices, history, contracts, properties, businesses, insurance, civic work, rumors, local opportunities and emergency services.
+- A future phone resource can open the same interface/data through `docs/PHONE_BRIDGE.md` without replacing LOTB authority.
 
 ## Player/civilian smoke tests
 
@@ -54,6 +60,7 @@ Expected result:
 - `/crew` — qualitative crew standing.
 - `/will` — wills and beneficiaries.
 - `/property` — nearby and owned/access-granted properties.
+- `/insurance` — policies, evidence-backed claims, renewals and approved payouts.
 - `/civicwork` — neighborhood-driven legitimate public work.
 - `/dealer [dealership-key]` — dealership stock.
 - `/mycars` — registered Qbox vehicles.
@@ -76,6 +83,12 @@ EMS:
 DOJ:
 - `/doj` — case docket, warrants, evidence and contract disputes.
 
+Insurance/adjusters:
+- Characters with an `insurance` or `adjuster` group (or appropriate staff ACE) see the adjuster queue inside `/insurance`.
+
+Authorized city departments/staff:
+- `/citynotice` — publishes a temporary citywide or district City app notice.
+
 Staff:
 - `/staffpanel` — audit trail, notes and logged warnings.
 - `/lotbhealth` — runtime health check.
@@ -90,7 +103,7 @@ The sample recipes in `sql/lotb_v04.sql` reference example item names. See `docs
 
 - Never commit Cfx license keys, DB passwords, Discord tokens, phone credentials, webhooks, or paid assets.
 - Use a staging server before production updates.
-- LOTB keeps money, inventory, evidence, progression, property ownership and rewards server-authoritative.
+- LOTB keeps money, inventory, evidence, progression, property ownership, insurance decisions and rewards server-authoritative.
 - Qbox-owned vehicle data is accessed through Qbox vehicle exports; LOTB does not write directly to Qbox vehicle tables.
 - Back up MariaDB before schema changes.
 - Run actual exploit/performance/load tests on the FXServer before opening the whitelist.
