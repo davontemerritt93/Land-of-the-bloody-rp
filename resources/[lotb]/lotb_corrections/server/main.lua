@@ -113,7 +113,7 @@ RegisterNetEvent('lotb_corrections:imposeSentence', function(data)
     local sentenceKey = makeKey('SENT')
     MySQL.insert.await([[
         INSERT INTO lotb_sentences(sentence_key,citizenid,case_key,imposed_by_citizenid,total_minutes,parole_after_minutes,notes)
-        VALUES(?,?,NULLIF(?,''),?,?,?,?,?)
+        VALUES(?,?,NULLIF(?,''),?,?,?,?)
     ]], { sentenceKey, citizenid, caseKey, cid(source), minutes, paroleAfter > 0 and paroleAfter or nil, notes })
     ensureProfile(citizenid)
     exports.lotb_core:Audit('corrections', source, 'impose_sentence', sentenceKey, { citizenid = citizenid, case = caseKey, minutes = minutes, paroleAfter = paroleAfter })
