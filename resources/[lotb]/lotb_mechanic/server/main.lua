@@ -18,7 +18,7 @@ lib.callback.register('lotb_mechanic:myOrders', function(source)
     if isMechanic(source) then
         return MySQL.query.await([[
             SELECT * FROM lotb_mechanic_orders
-            WHERE status IN ('open','claimed','awaiting_payment')
+            WHERE status IN ('open','claimed','awaiting_payment','paid')
             ORDER BY created_at DESC LIMIT 30
         ]]) or {}
     end
@@ -91,20 +91,47 @@ RegisterNetEvent('lotb_mechanic:payOrder', function(orderKey)
     local source = source
     local citizenid = cid(source)
     if not citizenid then return end
+
     local order = MySQL.single.await([[
         SELECT * FROM lotb_mechanic_orders WHERE order_key = ? AND customer_citizenid = ? LIMIT 1
     ]], { orderKey, citizenid })
-    if not order or order.status ~= 'awaiting_payment' then return end
+    if not order or order.status ~= 'awaiting_payment' or not order.mechanic_citizenid then return end
+
     local amount = math.max(0, tonumber(order.quoted_price) or 0)
+    local locked = MySQL.update.await([[
+        UPDATE lotb_mechanic_orders SET status = 'payment_processing'
+        WHERE order_key = ? AND customer_citizenid = ? AND status = 'awaiting_payment'
+    ]], { orderKey, citizenid })
+    if not locked or locked < 1 then return end
+
     if amount > 0 and not exports.qbx_core:RemoveMoney(source, 'bank', amount, 'lotb-mechanic-work') then
+        MySQL.update.await("UPDATE lotb_mechanic_orders SET status='awaiting_payment' WHERE order_key=? AND status='payment_processing'", { orderKey })
         return exports.lotb_core:Notify(source, 'You cannot afford the repair quote.', 'error')
     end
-    MySQL.update.await('UPDATE lotb_mechanic_orders SET paid_amount = ?, status = ? WHERE order_key = ?', { amount, 'paid', orderKey })
+
+    local payoutKey
+    if amount > 0 then
+        local ok, result = pcall(function()
+            return exports.lotb_finance:CreatePendingPayout(order.mechanic_citizenid, amount, 'mechanic', orderKey)
+        end)
+        payoutKey = ok and result or nil
+        if not payoutKey then
+            exports.qbx_core:AddMoney(source, 'bank', amount, 'lotb-mechanic-payment-refund')
+            MySQL.update.await("UPDATE lotb_mechanic_orders SET status='awaiting_payment' WHERE order_key=? AND status='payment_processing'", { orderKey })
+            exports.lotb_core:Audit('mechanic', source, 'payment_payout_failed', orderKey, { amount = amount })
+            return exports.lotb_core:Notify(source, 'Payment could not be routed; your money was refunded.', 'error')
+        end
+    end
+
+    MySQL.update.await([[
+        UPDATE lotb_mechanic_orders SET paid_amount = ?, status = 'paid'
+        WHERE order_key = ? AND status = 'payment_processing'
+    ]], { amount, orderKey })
     MySQL.insert.await([[
         INSERT INTO lotb_bank_ledger (account_type,account_ref,direction,amount,reason,actor_citizenid)
         VALUES ('player',?,'out',?,'mechanic work',?)
     ]], { citizenid, amount, citizenid })
-    exports.lotb_core:Audit('mechanic', source, 'pay_order', orderKey, { amount = amount })
+    exports.lotb_core:Audit('mechanic', source, 'pay_order', orderKey, { amount = amount, mechanic = order.mechanic_citizenid, payout = payoutKey })
     exports.lotb_core:Notify(source, 'Repair quote paid.', 'success')
 end)
 
@@ -124,7 +151,7 @@ RegisterNetEvent('lotb_mechanic:complete', function(orderKey, serviceType, summa
         INSERT INTO lotb_vehicle_service_history (vehicle_id,order_key,service_type,summary,mileage,mechanic_citizenid)
         VALUES (?,?,?,?,?,?)
     ]], { order.vehicle_id, orderKey, serviceType, summary, mileage > 0 and mileage or nil, mechanicCid })
-    MySQL.update.await("UPDATE lotb_mechanic_orders SET status = 'completed', completed_at = NOW() WHERE order_key = ?", { orderKey })
+    MySQL.update.await("UPDATE lotb_mechanic_orders SET status = 'completed', completed_at = NOW() WHERE order_key = ? AND status='paid'", { orderKey })
     exports.lotb_core:Audit('mechanic', source, 'complete_order', orderKey, { vehicleId = order.vehicle_id, type = serviceType })
     exports.lotb_core:Notify(source, 'Work order completed and service history saved.', 'success')
 end)
