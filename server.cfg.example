@@ -1,5 +1,5 @@
 # =============================================================
-# LAND OF THE BLOODY RP — Core Build v0.3
+# LAND OF THE BLOODY RP — Core Build v0.4
 # Custom LOTB resources are additive to a current Qbox deploy.
 # =============================================================
 
@@ -15,20 +15,19 @@ set onesync_population true
 # set mysql_connection_string "mysql://USER:PASSWORD@HOST/DB?charset=utf8mb4"
 # sv_licenseKey "YOUR_CFX_KEY"
 
-# Do not hard-code an old game build here. Pick the build required by the
-# current Qbox/FiveM resources you actually install and test.
+# Pick the game build required by the current Qbox/FiveM resources you install and test.
 # sv_enforceGameBuild <CURRENT_TESTED_BUILD>
 
-# LOTB ACE permissions. Map your real admin/staff principals to these groups
-# in the private production config, not in this public repository.
+# LOTB ACE permissions. Map your real staff principals privately.
 add_ace group.admin lotb.admin allow
 add_ace group.admin lotb.justice.manage allow
 add_ace group.admin lotb.business.manage allow
 add_ace group.admin lotb.crew.manage allow
 add_ace group.admin lotb.medical.manage allow
 
-# Start the normal Qbox / ox dependencies BEFORE this block:
-# qbx_core, ox_lib, oxmysql, ox_inventory, appearance, voice, phone, etc.
+# Start normal Qbox / ox dependencies BEFORE this block, including:
+# ox_lib, oxmysql, qbx_core, ox_inventory, qbx_vehicles, qbx_garages,
+# appearance, voice, phone/communications, spawn and other base resources.
 
 ensure lotb_core
 ensure lotb_identity
@@ -37,6 +36,7 @@ ensure lotb_scenethreads
 ensure lotb_evidence
 ensure lotb_economy
 ensure lotb_businesses
+ensure lotb_finance
 ensure lotb_crews
 ensure lotb_contracts
 ensure lotb_dispatch
@@ -46,4 +46,12 @@ ensure lotb_world
 ensure lotb_rumors
 ensure lotb_opportunities
 ensure lotb_archive
+ensure lotb_legacy
+ensure lotb_properties
+ensure lotb_autos
+ensure lotb_mechanic
+ensure lotb_underworld
+ensure lotb_robberies
+ensure lotb_tablets
+ensure lotb_admin
 ensure lotb_hud
