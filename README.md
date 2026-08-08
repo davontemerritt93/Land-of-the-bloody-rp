@@ -1,4 +1,4 @@
-# LAND OF THE BLOODY RP — Core Build v0.4
+# LAND OF THE BLOODY RP — Core Build v0.5
 ## Serious RP | **The city remembers.**
 
 LOTB is a Qbox-based serious-roleplay gameplay layer built around persistent consequences rather than disconnected minigames.
@@ -16,9 +16,9 @@ LOTB is a Qbox-based serious-roleplay gameplay layer built around persistent con
 - **World Scars + City Archive** — major RP can leave aftermath and become city history.
 - **Opportunity Director** — neighborhood conditions generate different RP circumstances.
 
-## v0.4 production expansion
+## Production systems
 
-- Automatic serious-RP story/goals onboarding after Qbox character load.
+- Serious-RP character story/goals onboarding after Qbox character load.
 - Wills, beneficiaries and succession hooks.
 - Persistent property ownership, access and maintenance.
 - Neighborhood-driven civilian civic work.
@@ -26,9 +26,12 @@ LOTB is a Qbox-based serious-roleplay gameplay layer built around persistent con
 - Mechanic work orders, quotes, payments and permanent vehicle service history.
 - Relationship-driven underworld progression and server-authoritative crafting.
 - Consequence-driven robbery scenes that create dispatch, witnesses, evidence, rumors and district pressure.
-- Personal/business banking overview, business deposits/withdrawals/transfers and ledgers.
+- Personal/business banking and transaction ledgers.
+- Insurance policies, evidence-backed claims, adjuster review and safe payout collection.
 - Police MDT, EMS tablet and DOJ docket using LOTB records.
 - Staff audit/notes/warning panel.
+- Unified `/cityapp` with a stable bridge for future phone integration.
+- Custom LOTB HUD.
 - Runtime `/lotbhealth` plus repository consistency checks.
 
 ## Install
@@ -37,17 +40,18 @@ LOTB is a Qbox-based serious-roleplay gameplay layer built around persistent con
 2. Confirm `qbx_core`, `ox_lib`, `oxmysql`, `ox_inventory` and `qbx_vehicles` work.
 3. Import `sql/lotb.sql`.
 4. Import `sql/lotb_v04.sql`.
-5. Optionally import `sql/lotb_seed_v04.sql` for starter dealership stock.
-6. Copy `resources/[lotb]` into your server resources folder.
-7. Add the LOTB `ensure` block from `server.cfg.example` after dependencies.
-8. Restart and run `/lotbhealth` as an admin.
+5. Import `sql/lotb_v05.sql`.
+6. Optionally import the v0.4/v0.5 seed SQL files for starter dealership stock and City app notices.
+7. Copy `resources/[lotb]` into your server resources folder.
+8. Add the LOTB `ensure` block from `server.cfg.example` after dependencies.
+9. Restart and run `/lotbhealth` as an admin.
 
-See `docs/INSTALL.md` for smoke tests and deployment details.
+See `docs/INSTALL.md` for smoke tests and `docs/PHONE_BRIDGE.md` for vendor phone integration.
 
 ## Architecture rule
 
-LOTB does **not** modify Qbox core tables/code when a supported Qbox export exists. Money, inventory, rewards, evidence, property ownership and progression are server-authoritative. The goal is to remain upgradeable and make one scene create more RP later instead of simply paying out and disappearing.
+LOTB does **not** modify Qbox core tables/code when a supported Qbox export exists. Money, inventory, rewards, evidence, property ownership, insurance decisions and progression are server-authoritative. The goal is to remain upgradeable and make one scene create more RP later instead of simply paying out and disappearing.
 
 ## Still requires the actual production host
 
-This repository does not redistribute Qbox, paid/licensed phone resources, custom MLOs, clothing, vehicle packs or audio. Phone/voice vendor integration, custom interiors/art and real-player performance/exploit testing must be completed on the actual FXServer deployment.
+This repository does not redistribute Qbox, paid/licensed phone resources, custom MLOs, clothing, vehicle packs or audio. Vendor phone/voice adapters, custom interiors/art and real-player performance/exploit testing must be completed on the actual FXServer deployment.
