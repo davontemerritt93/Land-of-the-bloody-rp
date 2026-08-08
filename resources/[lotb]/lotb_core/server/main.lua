@@ -47,9 +47,10 @@ RegisterCommand('lotbhealth', function(source)
 
     local expected = {
         'lotb_core', 'lotb_identity', 'lotb_citymemory', 'lotb_scenethreads', 'lotb_evidence',
-        'lotb_economy', 'lotb_businesses', 'lotb_crews', 'lotb_contracts', 'lotb_dispatch',
-        'lotb_justice', 'lotb_medical', 'lotb_world', 'lotb_rumors', 'lotb_opportunities',
-        'lotb_archive', 'lotb_hud'
+        'lotb_economy', 'lotb_businesses', 'lotb_finance', 'lotb_crews', 'lotb_contracts',
+        'lotb_dispatch', 'lotb_justice', 'lotb_medical', 'lotb_world', 'lotb_rumors',
+        'lotb_opportunities', 'lotb_archive', 'lotb_legacy', 'lotb_properties', 'lotb_autos',
+        'lotb_mechanic', 'lotb_underworld', 'lotb_robberies', 'lotb_tablets', 'lotb_admin', 'lotb_hud'
     }
 
     local failed = {}
@@ -60,22 +61,30 @@ RegisterCommand('lotbhealth', function(source)
         end
     end
 
-    local schemaOk = false
-    local ok, result = pcall(function()
+    local baseSchemaOk, v04SchemaOk = false, false
+    local ok1, result1 = pcall(function()
         return MySQL.scalar.await([[
             SELECT COUNT(*) FROM information_schema.tables
             WHERE table_schema = DATABASE() AND table_name = 'lotb_audit_log'
         ]])
     end)
-    schemaOk = ok and tonumber(result) == 1
+    baseSchemaOk = ok1 and tonumber(result1) == 1
 
-    if #failed == 0 and schemaOk then
-        return exports.qbx_core:Notify(source, 'LOTB health: database ready and all custom resources started.', 'success', 8000)
+    local ok2, result2 = pcall(function()
+        return MySQL.scalar.await([[
+            SELECT COUNT(*) FROM information_schema.tables
+            WHERE table_schema = DATABASE() AND table_name = 'lotb_wills'
+        ]])
+    end)
+    v04SchemaOk = ok2 and tonumber(result2) == 1
+
+    if #failed == 0 and baseSchemaOk and v04SchemaOk then
+        return exports.qbx_core:Notify(source, 'LOTB v0.4 health: database ready and all custom resources started.', 'success', 8000)
     end
 
-    local detail = schemaOk and 'Database: OK' or 'Database: LOTB schema missing/unavailable'
-    if #failed > 0 then detail = detail .. ' | Resources: ' .. table.concat(failed, ', ') end
-    exports.qbx_core:Notify(source, detail, 'warning', 12000)
+    local db = ('Database: base=%s v0.4=%s'):format(baseSchemaOk and 'OK' or 'MISSING', v04SchemaOk and 'OK' or 'MISSING')
+    if #failed > 0 then db = db .. ' | Resources: ' .. table.concat(failed, ', ') end
+    exports.qbx_core:Notify(source, db, 'warning', 12000)
 end, false)
 
 lib.print.info(('%s core loaded — %s'):format(config.serverName, config.tagline))
