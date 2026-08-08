@@ -1,10 +1,9 @@
 local function openProperty(row)
-    local owned = row.owner_citizenid ~= nil
     local options = {
         { title = row.label, description = ('%s • %s • maintenance %s/100'):format(row.property_type, row.district, row.maintenance or 0), icon = 'house' }
     }
 
-    if not owned and (row.purchase_price or 0) > 0 then
+    if not row.isOwned and (row.purchase_price or 0) > 0 then
         options[#options + 1] = {
             title = ('Buy for $%s'):format(row.purchase_price),
             icon = 'money-check-dollar',
@@ -13,10 +12,10 @@ local function openProperty(row)
                 if confirm == 'confirm' then TriggerServerEvent('lotb_properties:buy', row.property_key) end
             end
         }
-    else
+    elseif row.isOwner then
         options[#options + 1] = {
             title = 'Grant access',
-            description = 'Owners can add residents, employees or guests',
+            description = 'Add residents, employees or guests',
             icon = 'key',
             onSelect = function()
                 local input = lib.inputDialog('Grant property access', {
@@ -40,6 +39,12 @@ local function openProperty(row)
                 if input then TriggerServerEvent('lotb_properties:maintain', row.property_key, input[1]) end
             end
         }
+    elseif row.isOwned then
+        options[#options + 1] = {
+            title = ('Access: %s'):format(row.access_level or 'authorized'),
+            description = 'You can access this property, but owner controls are hidden.',
+            icon = 'key'
+        }
     end
 
     lib.registerContext({ id = 'lotb_property_detail', title = 'Property', options = options })
@@ -50,23 +55,27 @@ RegisterCommand('property', function()
     local rows = lib.callback.await('lotb_properties:listMine', false) or {}
     local nearby = lib.callback.await('lotb_properties:nearby', false) or {}
     local options = {}
+    local seen = {}
 
     for _, row in ipairs(nearby) do
+        seen[row.property_key] = true
         options[#options + 1] = {
             title = ('Nearby: %s'):format(row.label),
-            description = ('%.1fm • %s'):format(row.distance or 0, row.owner_citizenid and 'owned' or ('for sale $' .. tostring(row.purchase_price))),
+            description = ('%.1fm • %s'):format(row.distance or 0, row.isOwned and (row.isOwner and 'your property' or 'owned') or ('for sale $' .. tostring(row.purchase_price))),
             icon = 'location-dot',
             onSelect = function() openProperty(row) end
         }
     end
 
     for _, row in ipairs(rows) do
-        options[#options + 1] = {
-            title = row.label,
-            description = ('%s • %s'):format(row.district, row.property_type),
-            icon = 'house-user',
-            onSelect = function() openProperty(row) end
-        }
+        if not seen[row.property_key] then
+            options[#options + 1] = {
+                title = row.label,
+                description = ('%s • %s%s'):format(row.district, row.property_type, row.isOwner and ' • owner' or (' • ' .. tostring(row.access_level or 'access'))),
+                icon = 'house-user',
+                onSelect = function() openProperty(row) end
+            }
+        end
     end
 
     if #options == 0 then options[1] = { title = 'No properties found', description = 'Walk near a listed property or receive access from an owner.' } end
