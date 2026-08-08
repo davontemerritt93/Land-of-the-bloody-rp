@@ -74,7 +74,8 @@ else:
     sql = SQL_V05.read_text(encoding='utf-8')
     required_v05 = [
         'lotb_insurance_policies', 'lotb_insurance_claims', 'lotb_city_services_feed',
-        'lotb_case_rulings', 'lotb_media_articles'
+        'lotb_case_rulings', 'lotb_media_articles', 'lotb_sentences', 'lotb_inmate_profiles',
+        'lotb_corrections_events', 'lotb_visitation_requests'
     ]
     for table in required_v05:
         if f'`{table}`' not in sql:
