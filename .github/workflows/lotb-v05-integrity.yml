@@ -1,0 +1,31 @@
+name: LOTB v0.5 integrity
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run LOTB repository checker
+        run: python tools/check_repo.py
+      - name: Verify v0.5 durable payout schema
+        shell: bash
+        run: |
+          grep -q 'lotb_pending_payouts' sql/lotb_v05.sql
+          grep -q "ensure lotb_finance" server.cfg.example
+          grep -q "ensure lotb_mechanic" server.cfg.example
+          grep -q "lotb_finance" 'resources/[lotb]/lotb_mechanic/fxmanifest.lua'
+      - name: Verify City services schema
+        shell: bash
+        run: |
+          grep -q 'lotb_insurance_policies' sql/lotb_v05.sql
+          grep -q 'lotb_case_rulings' sql/lotb_v05.sql
+          grep -q 'lotb_media_articles' sql/lotb_v05.sql
+          grep -q 'lotb_sentences' sql/lotb_v05.sql
