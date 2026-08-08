@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <title>LOTB HUD</title>
+</head>
+<body>
+  <main id="hud" class="hidden">
+    <section class="identity">
+      <div class="brand">LAND OF THE BLOODY</div>
+      <div id="name" class="name">Citizen</div>
+      <div class="meta"><span id="job">Civilian</span><span>•</span><span id="district">county</span></div>
+    </section>
+    <section class="bars">
+      <div class="bar"><span>HP</span><div class="track"><div id="health" class="fill"></div></div></div>
+      <div class="bar"><span>AR</span><div class="track"><div id="armor" class="fill armor"></div></div></div>
+    </section>
+    <section class="money">
+      <div><small>CASH</small><strong id="cash">$0</strong></div>
+      <div><small>BANK</small><strong id="bank">$0</strong></div>
+      <div id="voice" class="voice">VOICE</div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
