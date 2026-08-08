@@ -41,12 +41,6 @@ lib.callback.register('lotb_tablets:citizenCase', function(source, citizenid)
     if citizenid == '' then return nil end
     return {
         warrants = MySQL.query.await("SELECT warrant_key,case_key,reason,status,expires_at,created_at FROM lotb_warrants WHERE citizenid=? ORDER BY created_at DESC LIMIT 20", { citizenid }) or {},
-        memories = MySQL.query.await([[
-            SELECT memory_type,SUM(weight) score FROM lotb_character_memory
-            WHERE citizenid=? AND created_at > DATE_SUB(NOW(), INTERVAL 60 DAY)
-            GROUP BY memory_type ORDER BY ABS(SUM(weight)) DESC LIMIT 10
-        ]], { citizenid }) or {},
-        medicalCount = MySQL.scalar.await('SELECT COUNT(*) FROM lotb_medical_records WHERE citizenid=?', { citizenid }) or 0,
         contracts = MySQL.query.await([[
             SELECT contract_key,title,status,amount,created_at FROM lotb_contracts
             WHERE creator_citizenid=? OR counterparty_citizenid=?
