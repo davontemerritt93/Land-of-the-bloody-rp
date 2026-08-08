@@ -39,7 +39,7 @@ Expected result:
 
 ## Main player interface
 
-- `/cityapp` — unified LOTB dashboard for notices, history, contracts, properties, businesses, insurance, civic work, rumors, local opportunities and emergency services.
+- `/cityapp` — unified LOTB dashboard for notices, news, history, contracts, properties, businesses, insurance, corrections/visitation, civic work, rumors, opportunities and emergency services.
 - A future phone resource can open the same interface/data through `docs/PHONE_BRIDGE.md` without replacing LOTB authority.
 
 ## Player/civilian smoke tests
@@ -52,6 +52,7 @@ Expected result:
 - `/contacts` — named contacts.
 - `/objecthistory <key>` — object legacy.
 - `/archive` — public city history.
+- `/news` — public player-written news; reporter roles also get newsroom drafting/publishing tools.
 - `/911` and `/311` — dispatch.
 - `/paybank` — audited personal transfer.
 - `/contract` — contracts/escrow.
@@ -61,6 +62,7 @@ Expected result:
 - `/will` — wills and beneficiaries.
 - `/property` — nearby and owned/access-granted properties.
 - `/insurance` — policies, evidence-backed claims, renewals and approved payouts.
+- `/corrections` — personal sentence/institutional/visitation record.
 - `/civicwork` — neighborhood-driven legitimate public work.
 - `/dealer [dealership-key]` — dealership stock.
 - `/mycars` — registered Qbox vehicles.
@@ -80,11 +82,23 @@ EMS:
 - `/emstablet` — recent medical records and patient lookup.
 - Existing `/medicaladd` and `/medical` commands remain available.
 
-DOJ:
+DOJ / courts:
 - `/doj` — case docket, warrants, evidence and contract disputes.
+- `/precedent` — search published LOTB rulings by holding, rationale, tag, case or ruling key.
+- `/ruling` — authorized judges publish a holding/rationale and can cite prior rulings.
+- `/sentence` — authorized judges record a legal sentence.
+
+Corrections:
+- `/correctionsstaff` — staff lookup, conduct/program records and parole decisions.
+- `/visitqueue` — visitation review.
+- See `docs/CORRECTIONS_BRIDGE.md` for connecting the legal sentence record to the prison MLO/jail resource you choose.
 
 Insurance/adjusters:
 - Characters with an `insurance` or `adjuster` group (or appropriate staff ACE) see the adjuster queue inside `/insurance`.
+
+News/media:
+- Characters with `reporter`, `media`, `news` or `press` group access can draft/publish/correct articles through `/news`.
+- Important published stories can be promoted into permanent City Archive history by staff.
 
 Authorized city departments/staff:
 - `/citynotice` — publishes a temporary citywide or district City app notice.
@@ -105,6 +119,7 @@ The sample recipes in `sql/lotb_v04.sql` reference example item names. See `docs
 - Use a staging server before production updates.
 - LOTB keeps money, inventory, evidence, progression, property ownership, insurance decisions and rewards server-authoritative.
 - Qbox-owned vehicle data is accessed through Qbox vehicle exports; LOTB does not write directly to Qbox vehicle tables.
+- LOTB corrections owns the legal sentence record; the selected jail/prison resource should own physical teleport/cells/doors/uniforms.
 - Back up MariaDB before schema changes.
 - Run actual exploit/performance/load tests on the FXServer before opening the whitelist.
 - MLOs, clothing, vehicle packs, custom audio and other art/content still require separately licensed/created assets.
