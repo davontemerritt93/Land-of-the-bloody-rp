@@ -4,7 +4,7 @@ game 'gta5'
 name 'lotb_mechanic'
 author 'Land of the Bloody RP'
 description 'Persistent vehicle work orders and service history'
-version '0.4.0'
+version '0.5.0'
 
 shared_script '@ox_lib/init.lua'
 server_scripts {
@@ -15,6 +15,7 @@ client_script 'client/main.lua'
 
 dependencies {
   'lotb_core',
+  'lotb_finance',
   'ox_lib',
   'oxmysql',
   'qbx_core',
