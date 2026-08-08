@@ -49,8 +49,9 @@ RegisterCommand('lotbhealth', function(source)
         'lotb_core', 'lotb_identity', 'lotb_citymemory', 'lotb_scenethreads', 'lotb_evidence',
         'lotb_economy', 'lotb_businesses', 'lotb_finance', 'lotb_crews', 'lotb_contracts',
         'lotb_dispatch', 'lotb_justice', 'lotb_medical', 'lotb_world', 'lotb_rumors',
-        'lotb_opportunities', 'lotb_archive', 'lotb_legacy', 'lotb_properties', 'lotb_autos',
-        'lotb_mechanic', 'lotb_underworld', 'lotb_robberies', 'lotb_tablets', 'lotb_admin', 'lotb_hud'
+        'lotb_opportunities', 'lotb_archive', 'lotb_legacy', 'lotb_properties', 'lotb_civicwork',
+        'lotb_autos', 'lotb_mechanic', 'lotb_underworld', 'lotb_robberies', 'lotb_tablets',
+        'lotb_admin', 'lotb_hud'
     }
 
     local failed = {}
