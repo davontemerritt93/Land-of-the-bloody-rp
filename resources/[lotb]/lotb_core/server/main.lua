@@ -49,9 +49,9 @@ RegisterCommand('lotbhealth', function(source)
         'lotb_core', 'lotb_identity', 'lotb_citymemory', 'lotb_scenethreads', 'lotb_evidence',
         'lotb_economy', 'lotb_businesses', 'lotb_finance', 'lotb_crews', 'lotb_contracts',
         'lotb_dispatch', 'lotb_justice', 'lotb_medical', 'lotb_world', 'lotb_rumors',
-        'lotb_opportunities', 'lotb_archive', 'lotb_legacy', 'lotb_properties', 'lotb_insurance',
-        'lotb_civicwork', 'lotb_autos', 'lotb_mechanic', 'lotb_underworld', 'lotb_robberies',
-        'lotb_tablets', 'lotb_admin', 'lotb_cityapp', 'lotb_hud'
+        'lotb_opportunities', 'lotb_archive', 'lotb_media', 'lotb_legacy', 'lotb_properties',
+        'lotb_insurance', 'lotb_civicwork', 'lotb_autos', 'lotb_mechanic', 'lotb_underworld',
+        'lotb_robberies', 'lotb_tablets', 'lotb_admin', 'lotb_cityapp', 'lotb_hud'
     }
 
     local failed = {}
@@ -74,7 +74,7 @@ RegisterCommand('lotbhealth', function(source)
 
     local baseSchemaOk = tableExists('lotb_audit_log')
     local v04SchemaOk = tableExists('lotb_wills')
-    local v05SchemaOk = tableExists('lotb_insurance_policies')
+    local v05SchemaOk = tableExists('lotb_insurance_policies') and tableExists('lotb_case_rulings') and tableExists('lotb_media_articles')
 
     if #failed == 0 and baseSchemaOk and v04SchemaOk and v05SchemaOk then
         return exports.qbx_core:Notify(source, 'LOTB v0.5 health: database ready and all custom resources started.', 'success', 8000)
