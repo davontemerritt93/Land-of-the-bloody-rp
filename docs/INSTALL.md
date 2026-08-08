@@ -2,88 +2,94 @@
 
 ## What this repository is
 
-This repository is the custom **LOTB gameplay layer**. It expects a current Qbox server underneath it; it does not vendor Qbox, ox_lib, oxmysql, inventory, voice, appearance, phone, maps, vehicles, or paid assets.
+This repository is the custom **LOTB gameplay layer**. It expects a current Qbox server underneath it; it does not vendor Qbox, ox_lib, oxmysql, ox_inventory, qbx_vehicles, voice, appearance, phone, maps, vehicles, or paid assets.
 
 ## Required base
 
-Use the current official Qbox txAdmin recipe for the base server. LOTB expects at minimum:
+Use the current official Qbox txAdmin recipe for the base server. LOTB v0.4 expects at minimum:
 
 - FiveM/FXServer with OneSync
-- Qbox / qbx_core
-- ox_lib
-- oxmysql
+- Qbox / `qbx_core`
+- `ox_lib`
+- `oxmysql`
+- `ox_inventory`
+- `qbx_vehicles`
 - MariaDB supported by the current Qbox release
 
-For a normal production city you will also want the Qbox recipe's inventory, appearance, voice, phone/communication choices, garages, spawn/character resources, and other base resources you select.
+For a production city also install/configure garages, appearance, voice, phone/communications, spawn/character resources, maps/MLOs and your licensed content.
 
 ## Install LOTB
 
-1. Deploy and boot a clean Qbox server first.
-2. Confirm you can create/log into a character and Qbox has no console errors.
-3. Back up the database.
-4. Import `sql/lotb.sql` into the same MariaDB database used by Qbox.
-5. Copy `resources/[lotb]` into the server's `resources` directory.
-6. Copy the LOTB ACE permissions and `ensure` block from `server.cfg.example` into your real configuration after Qbox/ox dependencies.
-7. Map your real administrator principals to `group.admin` or the LOTB ACE permissions in your private permissions config.
-8. Restart the server.
-9. As an admin, run `/lotbhealth`.
+1. Deploy and boot a clean current Qbox server first.
+2. Confirm you can create/log into a character and the base has no console errors.
+3. Back up MariaDB.
+4. Import `sql/lotb.sql`.
+5. Import `sql/lotb_v04.sql` after the base LOTB schema.
+6. Copy `resources/[lotb]` into the server `resources` directory.
+7. Copy the LOTB ACE permissions and `ensure` block from `server.cfg.example` after Qbox/ox dependencies.
+8. Map real staff principals to the LOTB ACE permissions in your private production config.
+9. Restart.
+10. Run `/lotbhealth` as an admin.
 
-## Expected `/lotbhealth` result
+Expected result:
 
-`LOTB health: database ready and all custom resources started.`
+`LOTB v0.4 health: database ready and all custom resources started.`
 
-If it reports a missing resource, check that exact folder name and its startup console error. If it reports the schema missing, verify the connection string and import `sql/lotb.sql` again.
+## Player/civilian smoke tests
 
-## First smoke test
+- `/rpstory` — character story/goals.
+- `/mymemory` — qualitative character memory.
+- `/citypulse` — qualitative district condition.
+- `/rumors` — rumor network.
+- `/leads` — City Director opportunities.
+- `/contacts` — named contacts.
+- `/objecthistory <key>` — object legacy.
+- `/archive` — public city history.
+- `/911` and `/311` — dispatch.
+- `/paybank` — audited personal transfer.
+- `/contract` — contracts/escrow.
+- `/business` — business state/stock.
+- `/banking` — personal overview and owned business accounts.
+- `/crew` — qualitative crew standing.
+- `/will` — wills and beneficiaries.
+- `/property` — nearby and owned/access-granted properties.
+- `/dealer [dealership-key]` — dealership stock.
+- `/mycars` — registered Qbox vehicles.
+- `/repairorder`, `/workorders`, `/servicehistory <vehicle-id>` — mechanic loop.
+- `/underworld` — relationship-driven underworld progression.
+- `/craftknowledge` — known recipes.
+- `/robbery` — starts a qualified robbery scene when at a configured target.
+- `/hud` — custom LOTB HUD.
 
-Use a real test character and run:
+## Department smoke tests
 
-- `/rpstory` — saves character story/goals.
-- `/mymemory` — displays qualitative character memory.
-- `/citypulse` — describes the current district without exposing raw hidden scores.
-- `/rumors` — opens the rumor network.
-- `/leads` — shows local dynamically generated RP opportunities.
-- `/contacts` — shows named contacts the character has actually interacted with.
-- `/objecthistory <key>` — reads registered object history.
-- `/911` and `/311` — creates server-authoritative dispatch calls.
-- `/paybank` — audited player-to-player bank transfer.
-- `/contract` — creates an RP contract with optional escrow.
-- `/business` — shows businesses owned by the character.
-- `/crew` — shows qualitative crew heat/influence.
-- `/hud` — toggles the LOTB HUD.
+Police:
+- `/mdt` — dispatch, warrants, cases, evidence and witness reports.
+- Existing case/evidence/warrant commands remain available.
 
-Police/DOJ smoke tests:
+EMS:
+- `/emstablet` — recent medical records and patient lookup.
+- Existing `/medicaladd` and `/medical` commands remain available.
 
-- `/casecreate <title>`
-- `/caseview <case-key>`
-- `/warrantissue <player-id> <case-key> <reason>`
-- `/warrants <player-id>`
-- `/evidencecreate <type> [case-key] [note]`
-- `/evidence <evidence-key>`
-- `/witnesscreate <event-type> <confidence> <case-key-or-none> <description>`
-- `/witnesses [case-key]`
+DOJ:
+- `/doj` — case docket, warrants, evidence and contract disputes.
 
-EMS smoke tests:
+Staff:
+- `/staffpanel` — audit trail, notes and logged warnings.
+- `/lotbhealth` — runtime health check.
+- `/createproperty` — create a property listing at current position.
+- `/dealerstock` — add/update vehicle inventory.
 
-- `/medicaladd <player-id> <type> <summary>`
-- `/medical <player-id>`
+## Underworld crafting items
 
-Admin setup tests:
-
-- `/businesscreate <player-id> <business-key> <district> <name>`
-- `/crewcreate <leader-id> <crew-key> <name>`
-- `/crewadd <crew-key> <player-id> <rank>`
-- `/lotbmemoryadd <player-id> <memory-type> <weight>`
-- `/lotbdistrict <district> <field> <amount>`
-- `/contactstanding <player-id> <contact-key> <trust> <fear> <debt>`
-- `/legacycreate <type> <key> <label>`
-- `/legacyadd <key> <event-type> <importance> <summary>`
-- `/lotbgenerate [district]`
+The sample recipes in `sql/lotb_v04.sql` reference example item names such as `metals`, `electronics`, `rubber`, `repairkit` and `lockpick`. Your ox_inventory item definitions must contain the item names you actually use. Edit the recipes to match your chosen item pack before public launch.
 
 ## Important production notes
 
-- Never commit Cfx license keys, database passwords, Discord tokens, phone API credentials, webhooks, or paid asset files to this public repository.
+- Never commit Cfx license keys, DB passwords, Discord tokens, phone credentials, webhooks, or paid assets.
 - Use a staging server before production updates.
-- Do not trust clients with money, inventory, evidence, reputation, district state, or rewards. LOTB's sensitive mutations are server-side for this reason.
+- LOTB keeps money, inventory, evidence, progression, property ownership and rewards server-authoritative.
+- Qbox-owned vehicle data is accessed through Qbox vehicle exports; LOTB does not write directly to Qbox vehicle tables.
 - Back up MariaDB before schema changes.
-- This code is a custom gameplay foundation; custom MLOs, vehicles, clothing, phone assets, audio, and other art/content still need to be licensed/installed separately.
+- Run actual exploit/performance/load tests on the FXServer before opening the whitelist.
+- MLOs, clothing, vehicle packs, custom audio and other art/content still require separately licensed/created assets.
