@@ -44,6 +44,31 @@ RegisterCommand('banking', function()
     local options = {
         { title = ('Personal bank: $%s'):format(money(data.bank)), description = ('Cash: $%s'):format(money(data.cash)), icon='wallet' }
     }
+
+    if (data.pendingTotal or 0) > 0 then
+        options[#options+1] = {
+            title = ('Pending earnings: $%s'):format(money(data.pendingTotal)),
+            description = ('%s payment%s waiting to be collected'):format(#(data.pendingPayouts or {}), #(data.pendingPayouts or {}) == 1 and '' or 's'),
+            icon = 'money-check-dollar',
+            onSelect = function()
+                local rows = {}
+                for _, payout in ipairs(data.pendingPayouts or {}) do
+                    rows[#rows+1] = {
+                        title = ('$%s • %s'):format(money(payout.amount), payout.category),
+                        description = payout.reference and ('Reference: ' .. payout.reference) or payout.payout_key,
+                        icon = 'hand-holding-dollar',
+                        onSelect = function()
+                            local confirm = lib.alertDialog({ header = 'Collect payout?', content = ('Deposit $%s to your bank?'):format(money(payout.amount)), cancel = true, centered = true })
+                            if confirm == 'confirm' then TriggerServerEvent('lotb_finance:collectPayout', payout.payout_key) end
+                        end
+                    }
+                end
+                lib.registerContext({ id='lotb_pending_payouts', title='Pending Earnings', options=rows })
+                lib.showContext('lotb_pending_payouts')
+            end
+        }
+    end
+
     for _, business in ipairs(data.businesses or {}) do
         options[#options+1] = { title=business.name, description=('Business balance: $%s'):format(money(business.balance)), icon='building-columns', onSelect=function() businessMenu(business) end }
     end
