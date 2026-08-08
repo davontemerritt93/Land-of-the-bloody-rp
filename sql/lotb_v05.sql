@@ -55,3 +55,39 @@ CREATE TABLE IF NOT EXISTS `lotb_city_services_feed` (
   KEY `idx_lotb_feed_created` (`created_at`),
   KEY `idx_lotb_feed_expiry` (`expires_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `lotb_case_rulings` (
+  `ruling_key` VARCHAR(96) NOT NULL,
+  `case_key` VARCHAR(96) NOT NULL,
+  `judge_citizenid` VARCHAR(64) NOT NULL,
+  `title` VARCHAR(180) NOT NULL,
+  `holding` VARCHAR(1200) NOT NULL,
+  `rationale` VARCHAR(2000) NOT NULL,
+  `tags_json` LONGTEXT NULL,
+  `citations_json` LONGTEXT NULL,
+  `precedential` TINYINT(1) NOT NULL DEFAULT 1,
+  `status` VARCHAR(32) NOT NULL DEFAULT 'published',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ruling_key`),
+  KEY `idx_lotb_ruling_case` (`case_key`),
+  KEY `idx_lotb_ruling_created` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `lotb_media_articles` (
+  `article_key` VARCHAR(96) NOT NULL,
+  `author_citizenid` VARCHAR(64) NOT NULL,
+  `outlet` VARCHAR(96) NOT NULL,
+  `headline` VARCHAR(180) NOT NULL,
+  `body` TEXT NOT NULL,
+  `category` VARCHAR(48) NOT NULL DEFAULT 'local',
+  `district` VARCHAR(64) NULL,
+  `sources_json` LONGTEXT NULL,
+  `status` VARCHAR(32) NOT NULL DEFAULT 'draft',
+  `correction_note` VARCHAR(800) NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `published_at` DATETIME NULL,
+  PRIMARY KEY (`article_key`),
+  KEY `idx_lotb_media_author` (`author_citizenid`),
+  KEY `idx_lotb_media_status` (`status`),
+  KEY `idx_lotb_media_published` (`published_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
