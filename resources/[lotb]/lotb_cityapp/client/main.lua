@@ -27,12 +27,8 @@ local function openCityApp()
                 return {title=row.title,description=('%s • $%s • %s'):format(row.status,money(row.amount),row.contract_key),icon='handshake'}
             end)
         end},
-        {title='Properties',description=('%s accessible properties'):format(#(data.properties or {})),icon='house',onSelect=function()
-            ExecuteCommand('property')
-        end},
-        {title='Businesses',description=('%s owned businesses'):format(#(data.businesses or {})),icon='store',onSelect=function()
-            if #(data.businesses or {})>0 then ExecuteCommand('banking') else ExecuteCommand('business') end
-        end},
+        {title='Properties',description=('%s accessible properties'):format(#(data.properties or {})),icon='house',onSelect=function() ExecuteCommand('property') end},
+        {title='Businesses',description=('%s owned businesses'):format(#(data.businesses or {})),icon='store',onSelect=function() if #(data.businesses or {})>0 then ExecuteCommand('banking') else ExecuteCommand('business') end end},
         {title='Insurance',description=('%s recent claims'):format(#(data.insurance or {})),icon='shield-halved',onSelect=function() ExecuteCommand('insurance') end},
         {title='Work board',description='Legitimate public work reacts to neighborhood needs.',icon='helmet-safety',onSelect=function() ExecuteCommand('civicwork') end},
         {title='Word on the street',description='Rumors are not guaranteed facts.',icon='comments',onSelect=function() ExecuteCommand('rumors') end},
@@ -40,9 +36,9 @@ local function openCityApp()
         {title='Emergency services',description='911 for emergencies • 311 for non-emergency city services',icon='phone',onSelect=function()
             local input=lib.inputDialog('City Services',{
                 {type='select',label='Service',required=true,options={{value='911',label='911 Emergency'},{value='311',label='311 Non-emergency'}}},
-                {type='textarea',label='What is happening?',required=true,max=500}
+                {type='textarea',label='What is happening?',required=true,min=3,max=500}
             })
-            if input then ExecuteCommand(('%s %s'):format(input[1],input[2])) end
+            if input then TriggerServerEvent('lotb_dispatch:create',input[1],input[2]) end
         end}
     }
     lib.registerContext({id='lotb_cityapp',title='LAND OF THE BLOODY — CITY',options=options}); lib.showContext('lotb_cityapp')
