@@ -91,3 +91,59 @@ CREATE TABLE IF NOT EXISTS `lotb_media_articles` (
   KEY `idx_lotb_media_status` (`status`),
   KEY `idx_lotb_media_published` (`published_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `lotb_sentences` (
+  `sentence_key` VARCHAR(96) NOT NULL,
+  `citizenid` VARCHAR(64) NOT NULL,
+  `case_key` VARCHAR(96) NULL,
+  `imposed_by_citizenid` VARCHAR(64) NOT NULL,
+  `total_minutes` INT NOT NULL,
+  `served_minutes` INT NOT NULL DEFAULT 0,
+  `status` VARCHAR(32) NOT NULL DEFAULT 'active',
+  `parole_after_minutes` INT NULL,
+  `notes` VARCHAR(1200) NULL,
+  `started_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `released_at` DATETIME NULL,
+  PRIMARY KEY (`sentence_key`),
+  KEY `idx_lotb_sentence_citizen` (`citizenid`),
+  KEY `idx_lotb_sentence_status` (`status`),
+  KEY `idx_lotb_sentence_case` (`case_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `lotb_inmate_profiles` (
+  `citizenid` VARCHAR(64) NOT NULL,
+  `conduct` INT NOT NULL DEFAULT 0,
+  `program_credit` INT NOT NULL DEFAULT 0,
+  `commissary_balance` INT NOT NULL DEFAULT 0,
+  `housing_unit` VARCHAR(64) NULL,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`citizenid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `lotb_corrections_events` (
+  `event_key` VARCHAR(96) NOT NULL,
+  `citizenid` VARCHAR(64) NOT NULL,
+  `event_type` VARCHAR(64) NOT NULL,
+  `summary` VARCHAR(800) NOT NULL,
+  `conduct_delta` INT NOT NULL DEFAULT 0,
+  `program_credit_delta` INT NOT NULL DEFAULT 0,
+  `recorded_by_citizenid` VARCHAR(64) NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`event_key`),
+  KEY `idx_lotb_corrections_citizen` (`citizenid`),
+  KEY `idx_lotb_corrections_created` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `lotb_visitation_requests` (
+  `visit_key` VARCHAR(96) NOT NULL,
+  `inmate_citizenid` VARCHAR(64) NOT NULL,
+  `visitor_citizenid` VARCHAR(64) NOT NULL,
+  `status` VARCHAR(32) NOT NULL DEFAULT 'requested',
+  `scheduled_at` DATETIME NULL,
+  `note` VARCHAR(500) NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`visit_key`),
+  KEY `idx_lotb_visit_inmate` (`inmate_citizenid`),
+  KEY `idx_lotb_visit_visitor` (`visitor_citizenid`),
+  KEY `idx_lotb_visit_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
