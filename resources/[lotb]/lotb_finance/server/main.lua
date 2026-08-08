@@ -2,6 +2,10 @@ local function cid(source)
     return exports.lotb_core:GetCitizenId(source)
 end
 
+local function makeKey(prefix)
+    return ('%s-%d-%05d'):format(prefix, os.time(), math.random(0, 99999))
+end
+
 local function ownsBusiness(citizenid, businessKey)
     return MySQL.scalar.await('SELECT 1 FROM lotb_businesses WHERE business_key=? AND owner_citizenid=? LIMIT 1', { businessKey, citizenid }) == 1
 end
@@ -13,9 +17,34 @@ local function ledger(accountType, accountRef, direction, amount, reason, actor)
     ]], { accountType, accountRef, direction, amount, exports.lotb_core:CleanText(reason or '', 180), actor })
 end
 
+local function createPendingPayout(citizenid, amount, category, reference)
+    citizenid = exports.lotb_core:CleanText(citizenid or '', 64)
+    category = exports.lotb_core:CleanText(category or 'payout', 64)
+    reference = exports.lotb_core:CleanText(reference or '', 128)
+    amount = math.max(1, math.min(10000000, math.floor(tonumber(amount) or 0)))
+    if citizenid == '' then return nil end
+
+    local payoutKey = makeKey('PAY')
+    MySQL.insert.await([[
+        INSERT INTO lotb_pending_payouts (payout_key,citizenid,amount,category,reference)
+        VALUES (?,?,?,?,NULLIF(?,''))
+    ]], { payoutKey, citizenid, amount, category, reference })
+    return payoutKey
+end
+exports('CreatePendingPayout', createPendingPayout)
+
 lib.callback.register('lotb_finance:overview', function(source)
     local citizenid = cid(source)
     if not citizenid then return nil end
+    local pendingPayouts = MySQL.query.await([[
+        SELECT payout_key,amount,category,reference,created_at
+        FROM lotb_pending_payouts
+        WHERE citizenid=? AND status='pending'
+        ORDER BY created_at ASC LIMIT 30
+    ]], { citizenid }) or {}
+    local pendingTotal = 0
+    for _, payout in ipairs(pendingPayouts) do pendingTotal = pendingTotal + (tonumber(payout.amount) or 0) end
+
     return {
         cash = exports.qbx_core:GetMoney(source, 'cash') or 0,
         bank = exports.qbx_core:GetMoney(source, 'bank') or 0,
@@ -23,7 +52,9 @@ lib.callback.register('lotb_finance:overview', function(source)
         personalLedger = MySQL.query.await([[
             SELECT direction,amount,reason,created_at FROM lotb_bank_ledger
             WHERE account_type='player' AND account_ref=? ORDER BY id DESC LIMIT 20
-        ]], { citizenid }) or {}
+        ]], { citizenid }) or {},
+        pendingPayouts = pendingPayouts,
+        pendingTotal = pendingTotal
     }
 end)
 
@@ -37,6 +68,37 @@ lib.callback.register('lotb_finance:businessLedger', function(source, businessKe
         WHERE account_type='business' AND account_ref=? ORDER BY id DESC LIMIT 40
     ]], { businessKey }) or {}
     return business
+end)
+
+RegisterNetEvent('lotb_finance:collectPayout', function(payoutKey)
+    local source = source
+    local citizenid = cid(source)
+    payoutKey = exports.lotb_core:CleanText(payoutKey or '', 96)
+    if not citizenid or payoutKey == '' then return end
+
+    local payout = MySQL.single.await([[
+        SELECT payout_key,amount,category,reference
+        FROM lotb_pending_payouts
+        WHERE payout_key=? AND citizenid=? AND status='pending' LIMIT 1
+    ]], { payoutKey, citizenid })
+    if not payout then return end
+
+    local locked = MySQL.update.await([[
+        UPDATE lotb_pending_payouts SET status='paying'
+        WHERE payout_key=? AND citizenid=? AND status='pending'
+    ]], { payoutKey, citizenid })
+    if not locked or locked < 1 then return end
+
+    local amount = math.max(0, tonumber(payout.amount) or 0)
+    if amount > 0 and exports.qbx_core:AddMoney(source, 'bank', amount, 'lotb-pending-payout') then
+        MySQL.update.await("UPDATE lotb_pending_payouts SET status='paid',paid_at=NOW() WHERE payout_key=? AND status='paying'", { payoutKey })
+        ledger('player', citizenid, 'in', amount, ('%s payout%s'):format(payout.category, payout.reference and (' • ' .. payout.reference) or ''), citizenid)
+        exports.lotb_core:Audit('finance', source, 'collect_payout', payoutKey, { amount = amount, category = payout.category, reference = payout.reference })
+        exports.lotb_core:Notify(source, ('Collected $%s to your bank.'):format(amount), 'success')
+    else
+        MySQL.update.await("UPDATE lotb_pending_payouts SET status='pending' WHERE payout_key=? AND status='paying'", { payoutKey })
+        exports.lotb_core:Notify(source, 'Payout could not be collected; it remains pending.', 'error')
+    end
 end)
 
 RegisterNetEvent('lotb_finance:depositBusiness', function(businessKey, amount, reason)
