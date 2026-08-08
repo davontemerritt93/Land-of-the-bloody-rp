@@ -1,47 +1,53 @@
-# LAND OF THE BLOODY RP — Core Build v0.3
+# LAND OF THE BLOODY RP — Core Build v0.4
 ## Serious RP | **The city remembers.**
 
-This repository is the custom gameplay layer for **Land of the Bloody RP**, built for a current Qbox server.
+LOTB is a Qbox-based serious-roleplay gameplay layer built around persistent consequences rather than disconnected minigames.
 
-LOTB is designed around persistent consequences instead of disconnected minigames. The city remembers characters, neighborhoods change, witnesses lose confidence over time, important objects gain history, contacts remember relationships, investigations persist, businesses hold real stock, and a hidden opportunity director reacts to the state of the city.
+## Signature systems
 
-## Working custom resources
+- **City Memory** — hidden contextual character history instead of public XP.
+- **District Pulse** — trust, pressure, prosperity, instability and community pride respond to RP.
+- **Witness Memory** — witness confidence decays instead of producing magical perfect identification.
+- **Rumor Network** — characters hear imperfect information with varying credibility.
+- **Object Legacy** — important vehicles/items can accumulate real player-created history.
+- **Named Contacts** — contacts remember trust, fear and debt.
+- **Scene Threads** — investigations, disputes and stories persist across restarts.
+- **Evidence Provenance** — evidence has integrity and custody history.
+- **World Scars + City Archive** — major RP can leave aftermath and become city history.
+- **Opportunity Director** — neighborhood conditions generate different RP circumstances.
 
-- `lotb_core` — security helpers, audit logging, `/lotbhealth` runtime check.
-- `lotb_identity` — `/rpstory` character history and long-term goals stored in Qbox metadata.
-- `lotb_citymemory` — hidden character memory plus neighborhood trust/pressure/prosperity/instability/community-pride.
-- `lotb_scenethreads` — persistent investigations, disputes, contracts, stories and unresolved RP threads.
-- `lotb_evidence` — evidence provenance, integrity, case assignment and chain-of-custody.
-- `lotb_economy` — audited server-authoritative player bank transfers.
-- `lotb_businesses` — persistent ownership, reputation and physical supply stock.
-- `lotb_crews` — hidden crew heat/influence without an arcade territory map.
-- `lotb_contracts` — persistent agreements with optional bank-funded escrow.
-- `lotb_dispatch` — server-authoritative 911/311 with responder alerts and waypoints.
-- `lotb_justice` — cases, evidence lookup, warrants and precedent-ready case storage.
-- `lotb_medical` — persistent EMS medical records and continuity.
-- `lotb_world` — decaying witness memory, named contacts, and Object Legacy.
-- `lotb_rumors` — imperfect information with confidence instead of omniscient alerts.
-- `lotb_opportunities` — hidden City Director that generates local RP opportunities from district conditions.
-- `lotb_archive` — public City Archive plus persistent/expiring in-world scars from major RP.
-- `lotb_hud` — custom black/blood-red HUD using Qbox PlayerData.
+## v0.4 production expansion
+
+- Automatic serious-RP story/goals onboarding after Qbox character load.
+- Wills, beneficiaries and succession hooks.
+- Persistent property ownership, access and maintenance.
+- Neighborhood-driven civilian civic work.
+- Dealership stock and purchases through `qbx_vehicles` ownership APIs.
+- Mechanic work orders, quotes, payments and permanent vehicle service history.
+- Relationship-driven underworld progression and server-authoritative crafting.
+- Consequence-driven robbery scenes that create dispatch, witnesses, evidence, rumors and district pressure.
+- Personal/business banking overview, business deposits/withdrawals/transfers and ledgers.
+- Police MDT, EMS tablet and DOJ docket using LOTB records.
+- Staff audit/notes/warning panel.
+- Runtime `/lotbhealth` plus repository consistency checks.
 
 ## Install
 
-1. Deploy the current official Qbox txAdmin recipe and confirm it works before adding LOTB.
-2. Import `sql/lotb.sql` into the same MariaDB database.
-3. Copy `resources/[lotb]` into the server resources directory.
-4. Add the LOTB ACE permissions and `ensure` block from `server.cfg.example` after Qbox/ox dependencies.
-5. Restart and run `/lotbhealth` as an admin.
-6. Follow `docs/INSTALL.md` for the full smoke-test sequence.
+1. Deploy a current Qbox server using the official txAdmin recipe.
+2. Confirm `qbx_core`, `ox_lib`, `oxmysql`, `ox_inventory` and `qbx_vehicles` work.
+3. Import `sql/lotb.sql`.
+4. Import `sql/lotb_v04.sql`.
+5. Optionally import `sql/lotb_seed_v04.sql` for starter dealership stock.
+6. Copy `resources/[lotb]` into your server resources folder.
+7. Add the LOTB `ensure` block from `server.cfg.example` after dependencies.
+8. Restart and run `/lotbhealth` as an admin.
 
-`lotb_archive` creates its two owned archive/scar tables on first start. The rest of the LOTB schema comes from `sql/lotb.sql`.
+See `docs/INSTALL.md` for smoke tests and deployment details.
 
-## What this repository intentionally does not include
+## Architecture rule
 
-This repo does not redistribute Qbox/ox resources, paid scripts, MLOs, copyrighted vehicle/clothing packs, phone assets, voice resources, or private credentials. Those belong in the actual server deployment and must be installed/licensed separately.
+LOTB does **not** modify Qbox core tables/code when a supported Qbox export exists. Money, inventory, rewards, evidence, property ownership and progression are server-authoritative. The goal is to remain upgradeable and make one scene create more RP later instead of simply paying out and disappearing.
 
-## LOTB design rule
+## Still requires the actual production host
 
-**One good scene should be able to create days or weeks of RP.**
-
-A shooting can affect a district, create witness reports, start an investigation thread, produce evidence, generate rumors, change crew heat, hurt a nearby business, leave visible aftermath, become a court case, and eventually enter the city's history. That cross-system consequence is the identity of Land of the Bloody RP.
+This repository does not redistribute Qbox, paid/licensed phone resources, custom MLOs, clothing, vehicle packs or audio. Phone/voice vendor integration, custom interiors/art and real-player performance/exploit testing must be completed on the actual FXServer deployment.
