@@ -7,6 +7,7 @@ CFG = ROOT / 'server.cfg.example'
 RESOURCES = ROOT / 'resources' / '[lotb]'
 SQL_BASE = ROOT / 'sql' / 'lotb.sql'
 SQL_V04 = ROOT / 'sql' / 'lotb_v04.sql'
+SQL_V05 = ROOT / 'sql' / 'lotb_v05.sql'
 
 errors = []
 
@@ -17,6 +18,8 @@ else:
     ensures = re.findall(r'^\s*ensure\s+(lotb_[A-Za-z0-9_-]+)\s*$', text, re.MULTILINE)
     if not ensures:
         errors.append('No LOTB ensure lines found')
+    if len(ensures) != len(set(ensures)):
+        errors.append('Duplicate LOTB ensure lines found')
     for resource in ensures:
         folder = RESOURCES / resource
         manifest = folder / 'fxmanifest.lua'
@@ -30,7 +33,6 @@ else:
         if "lua54 'yes'" in manifest_text or 'lua54 "yes"' in manifest_text:
             errors.append(f'Deprecated lua54 flag in {resource}/fxmanifest.lua')
 
-        # Check local .lua/.html/.css/.js paths declared in the manifest exist.
         for quoted in re.findall(r"['\"]([^'\"]+\.(?:lua|html|css|js))['\"]", manifest_text):
             if quoted.startswith('@'):
                 continue
@@ -65,6 +67,17 @@ else:
     for table in required_v04:
         if f'`{table}`' not in sql:
             errors.append(f'Missing v0.4 SQL table definition: {table}')
+
+if not SQL_V05.exists():
+    errors.append('sql/lotb_v05.sql is missing')
+else:
+    sql = SQL_V05.read_text(encoding='utf-8')
+    required_v05 = [
+        'lotb_insurance_policies', 'lotb_insurance_claims', 'lotb_city_services_feed'
+    ]
+    for table in required_v05:
+        if f'`{table}`' not in sql:
+            errors.append(f'Missing v0.5 SQL table definition: {table}')
 
 if errors:
     print('LOTB static check FAILED')
