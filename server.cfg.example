@@ -46,6 +46,7 @@ ensure lotb_world
 ensure lotb_rumors
 ensure lotb_opportunities
 ensure lotb_archive
+ensure lotb_media
 ensure lotb_legacy
 ensure lotb_properties
 ensure lotb_insurance
