@@ -42,4 +42,39 @@ exports('Notify', function(source, text, kind)
     exports.qbx_core:Notify(source, cleanText(text, 220), kind or 'inform', 5000)
 end)
 
+RegisterCommand('lotbhealth', function(source)
+    if not hasAce(source, 'lotb.admin') then return end
+
+    local expected = {
+        'lotb_core', 'lotb_identity', 'lotb_citymemory', 'lotb_scenethreads', 'lotb_evidence',
+        'lotb_economy', 'lotb_businesses', 'lotb_crews', 'lotb_contracts', 'lotb_dispatch',
+        'lotb_justice', 'lotb_medical', 'lotb_world', 'lotb_rumors', 'lotb_opportunities', 'lotb_hud'
+    }
+
+    local failed = {}
+    for _, resource in ipairs(expected) do
+        local state = GetResourceState(resource)
+        if state ~= 'started' and resource ~= GetCurrentResourceName() then
+            failed[#failed + 1] = ('%s=%s'):format(resource, state)
+        end
+    end
+
+    local schemaOk = false
+    local ok, result = pcall(function()
+        return MySQL.scalar.await([[
+            SELECT COUNT(*) FROM information_schema.tables
+            WHERE table_schema = DATABASE() AND table_name = 'lotb_audit_log'
+        ]])
+    end)
+    schemaOk = ok and tonumber(result) == 1
+
+    if #failed == 0 and schemaOk then
+        return exports.qbx_core:Notify(source, 'LOTB health: database ready and all custom resources started.', 'success', 8000)
+    end
+
+    local detail = schemaOk and 'Database: OK' or 'Database: LOTB schema missing/unavailable'
+    if #failed > 0 then detail = detail .. ' | Resources: ' .. table.concat(failed, ', ') end
+    exports.qbx_core:Notify(source, detail, 'warning', 12000)
+end, false)
+
 lib.print.info(('%s core loaded — %s'):format(config.serverName, config.tagline))
