@@ -22,6 +22,7 @@ LOTB is designed around persistent consequences instead of disconnected minigame
 - `lotb_world` — decaying witness memory, named contacts, and Object Legacy.
 - `lotb_rumors` — imperfect information with confidence instead of omniscient alerts.
 - `lotb_opportunities` — hidden City Director that generates local RP opportunities from district conditions.
+- `lotb_archive` — public City Archive plus persistent/expiring in-world scars from major RP.
 - `lotb_hud` — custom black/blood-red HUD using Qbox PlayerData.
 
 ## Install
@@ -33,6 +34,8 @@ LOTB is designed around persistent consequences instead of disconnected minigame
 5. Restart and run `/lotbhealth` as an admin.
 6. Follow `docs/INSTALL.md` for the full smoke-test sequence.
 
+`lotb_archive` creates its two owned archive/scar tables on first start. The rest of the LOTB schema comes from `sql/lotb.sql`.
+
 ## What this repository intentionally does not include
 
 This repo does not redistribute Qbox/ox resources, paid scripts, MLOs, copyrighted vehicle/clothing packs, phone assets, voice resources, or private credentials. Those belong in the actual server deployment and must be installed/licensed separately.
@@ -41,4 +44,4 @@ This repo does not redistribute Qbox/ox resources, paid scripts, MLOs, copyright
 
 **One good scene should be able to create days or weeks of RP.**
 
-A shooting can affect a district, create witness reports, start an investigation thread, produce evidence, generate rumors, change crew heat, hurt a nearby business, become a court case, and eventually enter the city's history. That cross-system consequence is the identity of Land of the Bloody RP.
+A shooting can affect a district, create witness reports, start an investigation thread, produce evidence, generate rumors, change crew heat, hurt a nearby business, leave visible aftermath, become a court case, and eventually enter the city's history. That cross-system consequence is the identity of Land of the Bloody RP.
