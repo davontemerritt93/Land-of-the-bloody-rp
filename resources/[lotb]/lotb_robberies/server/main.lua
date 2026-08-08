@@ -23,16 +23,13 @@ local function distanceFrom(source, coords)
 end
 
 local function policeCount()
-    local seen = {}
-    for _, job in ipairs({ 'police', 'sheriff', 'state' }) do
-        local players = exports.qbx_core:SearchPlayers({ job = job }) or {}
-        for _, player in ipairs(players) do
-            local key = player.PlayerData and player.PlayerData.citizenid
-            if key then seen[key] = true end
-        end
-    end
+    local allowed = { police = true, sheriff = true, state = true, bcso = true, sasp = true }
     local count = 0
-    for _ in pairs(seen) do count = count + 1 end
+    for _, playerId in ipairs(GetPlayers()) do
+        local player = exports.qbx_core:GetPlayer(tonumber(playerId))
+        local job = player and player.PlayerData and player.PlayerData.job
+        if job and allowed[job.name] and job.onduty ~= false then count = count + 1 end
+    end
     return count
 end
 
@@ -119,7 +116,7 @@ lib.callback.register('lotb_robberies:advance', function(source, sessionKey, req
     if requestedStage ~= (session.stage_index + 1) or not config.stages[requestedStage] then return false, 'bad_stage' end
 
     if requestedStage < #config.stages then
-        MySQL.update.await('UPDATE lotb_robbery_sessions SET stage_index=? WHERE session_key=? AND status=\'active\'', { requestedStage, sessionKey })
+        MySQL.update.await("UPDATE lotb_robbery_sessions SET stage_index=? WHERE session_key=? AND status='active'", { requestedStage, sessionKey })
         exports.lotb_core:Audit('robbery', source, 'stage', sessionKey, { stage = config.stages[requestedStage].key })
         return true, 'continue'
     end
