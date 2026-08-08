@@ -1,6 +1,6 @@
 # =============================================================
-# LAND OF THE BLOODY RP — Core Build v0.2
-# Custom LOTB resources are additive to a standard Qbox deploy.
+# LAND OF THE BLOODY RP — Core Build v0.3
+# Custom LOTB resources are additive to a current Qbox deploy.
 # =============================================================
 
 sv_hostname "Land of the Bloody RP | Serious RP"
@@ -10,21 +10,25 @@ sets tags "seriousrp,roleplay,qbox,lotb,whitelist"
 
 set onesync on
 set onesync_population true
-sv_enforceGameBuild 3258
 
 # Keep secrets in your real server.cfg / environment, never in Git.
 # set mysql_connection_string "mysql://USER:PASSWORD@HOST/DB?charset=utf8mb4"
 # sv_licenseKey "YOUR_CFX_KEY"
 
-# Example LOTB ACE permissions
+# Do not hard-code an old game build here. Pick the build required by the
+# current Qbox/FiveM resources you actually install and test.
+# sv_enforceGameBuild <CURRENT_TESTED_BUILD>
+
+# LOTB ACE permissions. Map your real admin/staff principals to these groups
+# in the private production config, not in this public repository.
 add_ace group.admin lotb.admin allow
 add_ace group.admin lotb.justice.manage allow
 add_ace group.admin lotb.business.manage allow
 add_ace group.admin lotb.crew.manage allow
 add_ace group.admin lotb.medical.manage allow
 
-# Start normal Qbox / ox dependencies BEFORE this block:
-# qbx_core, ox_lib, oxmysql, ox_inventory, etc.
+# Start the normal Qbox / ox dependencies BEFORE this block:
+# qbx_core, ox_lib, oxmysql, ox_inventory, appearance, voice, phone, etc.
 
 ensure lotb_core
 ensure lotb_identity
