@@ -25,11 +25,12 @@ For a production city also install/configure garages, appearance, voice, phone/c
 3. Back up MariaDB.
 4. Import `sql/lotb.sql`.
 5. Import `sql/lotb_v04.sql` after the base LOTB schema.
-6. Copy `resources/[lotb]` into the server `resources` directory.
-7. Copy the LOTB ACE permissions and `ensure` block from `server.cfg.example` after Qbox/ox dependencies.
-8. Map real staff principals to the LOTB ACE permissions in your private production config.
-9. Restart.
-10. Run `/lotbhealth` as an admin.
+6. Optional for quick dealership testing: import `sql/lotb_seed_v04.sql`.
+7. Copy `resources/[lotb]` into the server `resources` directory.
+8. Copy the LOTB ACE permissions and `ensure` block from `server.cfg.example` after Qbox/ox dependencies.
+9. Map real staff principals to the LOTB ACE permissions in your private production config.
+10. Restart.
+11. Run `/lotbhealth` as an admin.
 
 Expected result:
 
@@ -37,7 +38,7 @@ Expected result:
 
 ## Player/civilian smoke tests
 
-- `/rpstory` — character story/goals.
+- `/rpstory` — character story/goals; new characters are prompted automatically after Qbox loads them.
 - `/mymemory` — qualitative character memory.
 - `/citypulse` — qualitative district condition.
 - `/rumors` — rumor network.
@@ -53,6 +54,7 @@ Expected result:
 - `/crew` — qualitative crew standing.
 - `/will` — wills and beneficiaries.
 - `/property` — nearby and owned/access-granted properties.
+- `/civicwork` — neighborhood-driven legitimate public work.
 - `/dealer [dealership-key]` — dealership stock.
 - `/mycars` — registered Qbox vehicles.
 - `/repairorder`, `/workorders`, `/servicehistory <vehicle-id>` — mechanic loop.
@@ -82,7 +84,7 @@ Staff:
 
 ## Underworld crafting items
 
-The sample recipes in `sql/lotb_v04.sql` reference example item names such as `metals`, `electronics`, `rubber`, `repairkit` and `lockpick`. Your ox_inventory item definitions must contain the item names you actually use. Edit the recipes to match your chosen item pack before public launch.
+The sample recipes in `sql/lotb_v04.sql` reference example item names. See `docs/UNDERWORLD_ITEMS.md` and map those recipes to the item definitions on your selected ox_inventory setup before public launch.
 
 ## Important production notes
 
