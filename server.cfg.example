@@ -1,5 +1,5 @@
 # =============================================================
-# LAND OF THE BLOODY RP — Core Build v0.4
+# LAND OF THE BLOODY RP — Core Build v0.5
 # Custom LOTB resources are additive to a current Qbox deploy.
 # =============================================================
 
@@ -48,6 +48,7 @@ ensure lotb_opportunities
 ensure lotb_archive
 ensure lotb_legacy
 ensure lotb_properties
+ensure lotb_insurance
 ensure lotb_civicwork
 ensure lotb_autos
 ensure lotb_mechanic
@@ -55,4 +56,5 @@ ensure lotb_underworld
 ensure lotb_robberies
 ensure lotb_tablets
 ensure lotb_admin
+ensure lotb_cityapp
 ensure lotb_hud
