@@ -37,9 +37,9 @@ local function homeFeed(source)
     ]], { district }) or {}
 
     local archive = MySQL.query.await([[
-        SELECT archive_key,title,category,district,summary,event_at,created_at
+        SELECT archive_key,title,category,district,summary,created_at
         FROM lotb_city_archive
-        WHERE visibility='public' ORDER BY COALESCE(event_at,created_at) DESC LIMIT 6
+        WHERE is_public=1 ORDER BY created_at DESC LIMIT 6
     ]]) or {}
 
     local contracts = MySQL.query.await([[
