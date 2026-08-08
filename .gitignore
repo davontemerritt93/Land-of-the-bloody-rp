@@ -1,0 +1,22 @@
+# Never commit production secrets
+server.cfg
+*.env
+.env
+.env.*
+
+# FiveM runtime/generated data
+cache/
+logs/
+crashes/
+txData/
+
+# Local database dumps/backups
+*.sql.gz
+*.dump
+*.bak
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
