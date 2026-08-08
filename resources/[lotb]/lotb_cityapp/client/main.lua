@@ -31,6 +31,7 @@ local function openCityApp()
         {title='Properties',description=('%s accessible properties'):format(#(data.properties or {})),icon='house',onSelect=function() ExecuteCommand('property') end},
         {title='Businesses',description=('%s owned businesses'):format(#(data.businesses or {})),icon='store',onSelect=function() if #(data.businesses or {})>0 then ExecuteCommand('banking') else ExecuteCommand('business') end end},
         {title='Insurance',description=('%s recent claims'):format(#(data.insurance or {})),icon='shield-halved',onSelect=function() ExecuteCommand('insurance') end},
+        {title='Corrections & visitation',description='Sentence records, institutional progress and visit requests.',icon='building-shield',onSelect=function() ExecuteCommand('corrections') end},
         {title='Work board',description='Legitimate public work reacts to neighborhood needs.',icon='helmet-safety',onSelect=function() ExecuteCommand('civicwork') end},
         {title='Word on the street',description='Rumors are not guaranteed facts.',icon='comments',onSelect=function() ExecuteCommand('rumors') end},
         {title='Local opportunities',description='See what circumstances are developing nearby.',icon='compass',onSelect=function() ExecuteCommand('leads') end},
