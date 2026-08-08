@@ -2,22 +2,26 @@ local function groups(source)
     return exports.qbx_core:GetGroups(source) or {}
 end
 
+local function hasAnyGroup(groupTable, names)
+    for _, name in ipairs(names) do
+        if groupTable[name] ~= nil then return true end
+    end
+    return false
+end
+
 local function isPolice(source)
     if exports.lotb_core:HasAce(source, 'lotb.admin') or exports.lotb_core:HasAce(source, 'lotb.justice.manage') then return true end
-    local g = groups(source)
-    return g.police ~= nil or g.sheriff ~= nil or g.state ~= nil
+    return hasAnyGroup(groups(source), { 'police', 'sheriff', 'state', 'bcso', 'sasp' })
 end
 
 local function isMedical(source)
     if exports.lotb_core:HasAce(source, 'lotb.admin') or exports.lotb_core:HasAce(source, 'lotb.medical.manage') then return true end
-    local g = groups(source)
-    return g.ambulance ~= nil or g.ems ~= nil or g.doctor ~= nil
+    return hasAnyGroup(groups(source), { 'ambulance', 'ems', 'doctor', 'fire' })
 end
 
 local function isJustice(source)
     if exports.lotb_core:HasAce(source, 'lotb.admin') or exports.lotb_core:HasAce(source, 'lotb.justice.manage') then return true end
-    local g = groups(source)
-    return g.judge ~= nil or g.lawyer ~= nil or g.doj ~= nil or g.prosecutor ~= nil
+    return hasAnyGroup(groups(source), { 'judge', 'lawyer', 'doj', 'prosecutor', 'publicdefender' })
 end
 
 lib.callback.register('lotb_tablets:policeOverview', function(source)
