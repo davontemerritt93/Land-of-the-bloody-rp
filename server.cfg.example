@@ -45,4 +45,5 @@ ensure lotb_medical
 ensure lotb_world
 ensure lotb_rumors
 ensure lotb_opportunities
+ensure lotb_archive
 ensure lotb_hud
