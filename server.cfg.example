@@ -48,6 +48,7 @@ ensure lotb_opportunities
 ensure lotb_archive
 ensure lotb_legacy
 ensure lotb_properties
+ensure lotb_civicwork
 ensure lotb_autos
 ensure lotb_mechanic
 ensure lotb_underworld
