@@ -1,0 +1,44 @@
+# =============================================================
+# LAND OF THE BLOODY RP — Core Build v0.2
+# Custom LOTB resources are additive to a standard Qbox deploy.
+# =============================================================
+
+sv_hostname "Land of the Bloody RP | Serious RP"
+sets sv_projectName "Land of the Bloody RP"
+sets sv_projectDesc "The city remembers. High-consequence serious roleplay."
+sets tags "seriousrp,roleplay,qbox,lotb,whitelist"
+
+set onesync on
+set onesync_population true
+sv_enforceGameBuild 3258
+
+# Keep secrets in your real server.cfg / environment, never in Git.
+# set mysql_connection_string "mysql://USER:PASSWORD@HOST/DB?charset=utf8mb4"
+# sv_licenseKey "YOUR_CFX_KEY"
+
+# Example LOTB ACE permissions
+add_ace group.admin lotb.admin allow
+add_ace group.admin lotb.justice.manage allow
+add_ace group.admin lotb.business.manage allow
+add_ace group.admin lotb.crew.manage allow
+add_ace group.admin lotb.medical.manage allow
+
+# Start normal Qbox / ox dependencies BEFORE this block:
+# qbx_core, ox_lib, oxmysql, ox_inventory, etc.
+
+ensure lotb_core
+ensure lotb_identity
+ensure lotb_citymemory
+ensure lotb_scenethreads
+ensure lotb_evidence
+ensure lotb_economy
+ensure lotb_businesses
+ensure lotb_crews
+ensure lotb_contracts
+ensure lotb_dispatch
+ensure lotb_justice
+ensure lotb_medical
+ensure lotb_world
+ensure lotb_rumors
+ensure lotb_opportunities
+ensure lotb_hud
