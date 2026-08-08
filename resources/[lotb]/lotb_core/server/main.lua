@@ -48,7 +48,8 @@ RegisterCommand('lotbhealth', function(source)
     local expected = {
         'lotb_core', 'lotb_identity', 'lotb_citymemory', 'lotb_scenethreads', 'lotb_evidence',
         'lotb_economy', 'lotb_businesses', 'lotb_crews', 'lotb_contracts', 'lotb_dispatch',
-        'lotb_justice', 'lotb_medical', 'lotb_world', 'lotb_rumors', 'lotb_opportunities', 'lotb_hud'
+        'lotb_justice', 'lotb_medical', 'lotb_world', 'lotb_rumors', 'lotb_opportunities',
+        'lotb_archive', 'lotb_hud'
     }
 
     local failed = {}
