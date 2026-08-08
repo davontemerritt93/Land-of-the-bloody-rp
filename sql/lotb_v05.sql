@@ -147,3 +147,17 @@ CREATE TABLE IF NOT EXISTS `lotb_visitation_requests` (
   KEY `idx_lotb_visit_visitor` (`visitor_citizenid`),
   KEY `idx_lotb_visit_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `lotb_pending_payouts` (
+  `payout_key` VARCHAR(96) NOT NULL,
+  `citizenid` VARCHAR(64) NOT NULL,
+  `amount` INT NOT NULL,
+  `category` VARCHAR(64) NOT NULL,
+  `reference` VARCHAR(128) NULL,
+  `status` VARCHAR(32) NOT NULL DEFAULT 'pending',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `paid_at` DATETIME NULL,
+  PRIMARY KEY (`payout_key`),
+  KEY `idx_lotb_payout_citizen_status` (`citizenid`,`status`),
+  KEY `idx_lotb_payout_created` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
